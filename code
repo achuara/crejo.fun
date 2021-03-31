@@ -131,60 +131,60 @@ void add_review()   // to add review
 		muvie_year_release = location22->second.first;
 		
 		time_t t = time(NULL);         // to find local system year
-        tm* timePtr = localtime(&t);
-        int local_system_year=(timePtr->tm_year)+1900;
+                tm* timePtr = localtime(&t);
+                int local_system_year=(timePtr->tm_year)+1900;
 
-        if(muvie_year_release > local_system_year)  // check valid year of release  for rating
-        {
-        	cout<<"\n\t"<<"muvie yet to release";
+                if(muvie_year_release > local_system_year)  // check valid year of release  for rating
+                {
+        	  cout<<"\n\t"<<"muvie yet to release";
 		}
 		else
 		{
-				if(review_database[user_name].find(muvie_name)!=review_database[user_name].end())  // check , is rating already in review_database ?
-				{
-					cout<<"\n"<<"exception multi rating not allow"<<"\n";
-				}
-				else
-				{
-					review_database.insert(make_pair(user_name , unordered_map<string , int>() )); // insert review detail in review database
-					review_database[user_name].insert(make_pair(muvie_name , rating) );	
+		    if(review_database[user_name].find(muvie_name)!=review_database[user_name].end())  // check , is rating already in review_database ?
+		    {
+		       cout<<"\n"<<"exception multi rating not allow"<<"\n";
+		    }
+		    else
+		    {
+		       review_database.insert(make_pair(user_name , unordered_map<string , int>() )); // insert review detail in review database
+		       review_database[user_name].insert(make_pair(muvie_name , rating) );	
 					
-					if(review_database[user_name].size()==3)   // if published 3 reviw , store data in critics database  
-					{
-						cout<<"\n"<<"publish 3 review so promoted to critics"<<"\n";
-						critics[user_name]++;
-					}
+		       if(review_database[user_name].size()==3)   // if published 3 reviw , store data in critics database  
+		       {
+         			cout<<"\n"<<"publish 3 review so promoted to critics"<<"\n";
+				critics[user_name]++;
+			}
 					
-					int muvie_year;    // find muvie year with help of muvie name
-					auto location =  muvie_database.find(muvie_name);
-					muvie_year = location->second.first;
+			int muvie_year;    // find muvie year with help of muvie name
+			auto location =  muvie_database.find(muvie_name);
+			muvie_year = location->second.first;
 					
-					int rating1=rating;
+			int rating1=rating;
 					 
-					if(critics.find(user_name)!=critics.end())  // if critics , change rating_score=2*rating_score 
-					{
-						rating1=2*rating1;
-					}
+			if(critics.find(user_name)!=critics.end())  // if critics , change rating_score=2*rating_score 
+			{
+	        		rating1=2*rating1;
+			}
 					
 					
-					particular_year_database.insert(make_pair(muvie_year, vector<int>() )); // insert data in particular year rating database
-			        particular_year_database[muvie_year].push_back(rating1);
+			particular_year_database.insert(make_pair(muvie_year, vector<int>() )); // insert data in particular year rating database
+			particular_year_database[muvie_year].push_back(rating1);
 			
-			        particular_muvie_database.insert(make_pair(muvie_name, vector<int>() )); // insert data in particular muvie rating database
-			        particular_muvie_database[muvie_name].push_back(rating1);
+		        particular_muvie_database.insert(make_pair(muvie_name, vector<int>() )); // insert data in particular muvie rating database
+		        particular_muvie_database[muvie_name].push_back(rating1);
 			        
-			        if(critics.find(user_name)!=critics.end())     //  if critic then only insert in  particular muvie genre database
-					{
-				        string muvie_genre;     
-						auto location1 =  muvie_database.find(muvie_name);
-						muvie_genre = location1->second.second;
+		        if(critics.find(user_name)!=critics.end())     //  if critic then only insert in  particular muvie genre database
+			{
+		                string muvie_genre;     
+				auto location1 =  muvie_database.find(muvie_name);
+				muvie_genre = location1->second.second;
 						
-						particular_muvie_genre_database.insert(make_pair(muvie_genre, unordered_map<string , vector<int>>() )); // insert in  particular muvie genre database
-						particular_muvie_genre_database[muvie_genre].insert(make_pair(muvie_name , vector<int>()));
-				        particular_muvie_genre_database[muvie_genre][muvie_name].push_back(rating1);
-				   }
+				particular_muvie_genre_database.insert(make_pair(muvie_genre, unordered_map<string , vector<int>>() )); // insert in  particular muvie genre database
+				particular_muvie_genre_database[muvie_genre].insert(make_pair(muvie_name , vector<int>()));
+				particular_muvie_genre_database[muvie_genre][muvie_name].push_back(rating1);
+			}
 			        
-			    }
+		    }
 		}
 		
 		cout<<"\n"<<"to enter more review press 1 else 0 : ";
@@ -195,8 +195,8 @@ void add_review()   // to add review
 
 void display_result()
 {   
-    // average review score in particular release year
-    int year;  
+        // average review score in particular release year
+        int year;  
 	cout<<"\n"<<"enter year : ";
 	cin>>year;
 	auto p=particular_year_database.find(year);
@@ -227,7 +227,7 @@ void display_result()
 
 	
 	// top n movies by total review score by ‘critics’ in a particular genre.
-    string genre;  
+        string genre;  
 	cout<<"\n"<<"enter muvie category (genre) : ";
 	cin>>genre;
 	vector<pair<int,string>> total_rating_of_muvie; // to store all muvie with its total score  by critic in particular genre
@@ -254,4 +254,9 @@ void display_result()
 	
 	
 }
+
+
+
+
+
 
