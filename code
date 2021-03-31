@@ -37,20 +37,16 @@ int main()
 		{
 			case 1: add_user(); break;
 			case 2: add_muvie(); break;
-		    case 3: add_review(); break;
-		    case 4:	display_result(); break;
-		    default:
-		    	cout<<"\n"<<"invalid input "<<"\n";
+		        case 3: add_review(); break;
+		        case 4:	display_result(); break;
+		          default:
+		    	   cout<<"\n"<<"invalid input "<<"\n";
 		    
-		
-		}
+		 }
 		
 		cout<<"\n\n"<<"to get main menu press 1 else 0 : ";
 		cin>>choice1;
 	}
-	
-	
-	
 	
 	return 0;
 }
@@ -95,10 +91,7 @@ void add_muvie()  // to add muvie
 		cout<<"\n"<<"to enter more muvie data press 1 else 0 : ";
 		cin>>choice;
 	}
-	
-	 
-	
-	
+		
 }
 
 void add_review()   // to add review
