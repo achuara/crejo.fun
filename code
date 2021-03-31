@@ -1,1 +1,257 @@
+# include<bits/stdc++.h>
+using namespace std;
+
+unordered_map<string , int> user_database; // user databse
+unordered_map<string , pair<int,string> > muvie_database;  // muvie databse
+unordered_map<string , unordered_map<string , int> > review_database; // review databse
+
+unordered_map<int , vector<int> > particular_year_database; //all muvie review in particular year   
+unordered_map<string , vector<int> > particular_muvie_database; // all user and critic review in particular muvie
+unordered_map<string , unordered_map<string , vector<int>> > particular_muvie_genre_database; // review data base
+
+unordered_map<string , int> critics;  // all critics are stored here 
+
+void add_user();
+void add_muvie();
+void add_review();
+void display_result();
+
+int main()
+{
+	cout<<"\n"<<"to get main menu press 1 else 0 : ";
+	int choice1;
+	cin>>choice1;
+	
+	while(choice1)
+	{
+		cout<<"choose option"<<endl;
+		cout<<"  1. to add user"<<endl;
+		cout<<"  2. to add muvie"<<endl;
+		cout<<"  3. to add review"<<endl;
+		cout<<"  4. to dislay rating"<<endl;
+		
+		int option;
+		cin>>option;
+		
+		switch(option)
+		{
+			case 1: add_user(); break;
+			case 2: add_muvie(); break;
+		    case 3: add_review(); break;
+		    case 4:	display_result(); break;
+		    default:
+		    	cout<<"\n"<<"invalid input "<<"\n";
+		    
+		
+		}
+		
+		cout<<"\n\n"<<"to get main menu press 1 else 0 : ";
+		cin>>choice1;
+	}
+	
+	
+	
+	
+	return 0;
+}
+
+void add_user()    // to add user 
+{   
+	cout<<"\n"<<"to enter user press 1 else 0 : ";
+	int choice;
+	cin>>choice;
+	
+	while(choice)
+	{
+		string user;
+		cout<<"\n"<<"    enter user name: ";
+		cin>>user;
+		user_database[user]++;   // add user in  user_database
+		cout<<"\n"<<"to enter more user press 1 else 0 : ";
+		cin>>choice;
+	}
+	
+}
+
+void add_muvie()  // to add muvie
+{
+	
+	cout<<"\n"<<"to enter muvie data press 1 else 0 : ";
+	int choice;
+	cin>>choice;
+	
+	while(choice)
+	{
+		string muvie_name,muvie_category;  // declare variables
+		int release_year;
+		cout<<"\n"<<"enter muvie name: "; 
+		cin>>muvie_name;
+		cout<<"\n"<<"enter release_year: "; 
+		cin>>release_year;
+		cout<<"\n"<<"enter muvie_category: "; 
+		cin>>muvie_category;
+		muvie_database.insert(make_pair(muvie_name , make_pair(release_year , muvie_category) ) ); // add muvie in  muvie_database
+        
+		cout<<"\n"<<"to enter more muvie data press 1 else 0 : ";
+		cin>>choice;
+	}
+	
+	 
+	
+	
+}
+
+void add_review()   // to add review
+{
+	cout<<"\n"<<"to enter review press 1 else 0 : ";
+	int choice;
+	cin>>choice;
+	
+	while(choice)
+	{
+		string user_name,muvie_name;    // declare variables
+		int rating;
+		cout<<"\n"<<"enter user name: "; 
+		cin>>user_name;
+		cout<<"\n"<<"enter muvie name: "; 
+		cin>>muvie_name;
+		cout<<"\n"<<"enter rating: "; 
+		cin>>rating;
+		if(rating<1 or rating>10 )   // check rating constraint
+		{
+			cout<<"\n"<<"rating must be between 1 and 10 "<<endl;
+			cout<<"\t"<<"again enter rating : ";
+			cin>>rating;
+		}
+	
+		
+	
+		int muvie_year_release;   
+		auto location22 =  muvie_database.find(muvie_name);  // to find  muvie release year with help of muvie name
+		muvie_year_release = location22->second.first;
+		
+		time_t t = time(NULL);         // to find local system year
+        tm* timePtr = localtime(&t);
+        int local_system_year=(timePtr->tm_year)+1900;
+
+        if(muvie_year_release > local_system_year)  // check valid year of release  for rating
+        {
+        	cout<<"\n\t"<<"muvie yet to release";
+		}
+		else
+		{
+				if(review_database[user_name].find(muvie_name)!=review_database[user_name].end())  // check , is rating already in review_database ?
+				{
+					cout<<"\n"<<"exception multi rating not allow"<<"\n";
+				}
+				else
+				{
+					review_database.insert(make_pair(user_name , unordered_map<string , int>() )); // insert review detail in review database
+					review_database[user_name].insert(make_pair(muvie_name , rating) );	
+					
+					if(review_database[user_name].size()==3)   // if published 3 reviw , store data in critics database  
+					{
+						cout<<"\n"<<"publish 3 review so promoted to critics"<<"\n";
+						critics[user_name]++;
+					}
+					
+					int muvie_year;    // find muvie year with help of muvie name
+					auto location =  muvie_database.find(muvie_name);
+					muvie_year = location->second.first;
+					
+					int rating1=rating;
+					 
+					if(critics.find(user_name)!=critics.end())  // if critics , change rating_score=2*rating_score 
+					{
+						rating1=2*rating1;
+					}
+					
+					
+					particular_year_database.insert(make_pair(muvie_year, vector<int>() )); // insert data in particular year rating database
+			        particular_year_database[muvie_year].push_back(rating1);
+			
+			        particular_muvie_database.insert(make_pair(muvie_name, vector<int>() )); // insert data in particular muvie rating database
+			        particular_muvie_database[muvie_name].push_back(rating1);
+			        
+			        if(critics.find(user_name)!=critics.end())     //  if critic then only insert in  particular muvie genre database
+					{
+				        string muvie_genre;     
+						auto location1 =  muvie_database.find(muvie_name);
+						muvie_genre = location1->second.second;
+						
+						particular_muvie_genre_database.insert(make_pair(muvie_genre, unordered_map<string , vector<int>>() )); // insert in  particular muvie genre database
+						particular_muvie_genre_database[muvie_genre].insert(make_pair(muvie_name , vector<int>()));
+				        particular_muvie_genre_database[muvie_genre][muvie_name].push_back(rating1);
+				   }
+			        
+			    }
+		}
+		
+		cout<<"\n"<<"to enter more review press 1 else 0 : ";
+		cin>>choice;
+	}
+	
+}
+
+void display_result()
+{   
+    // average review score in particular release year
+    int year;  
+	cout<<"\n"<<"enter year : ";
+	cin>>year;
+	auto p=particular_year_database.find(year);
+	int sum=0;
+	
+	for(auto i=p->second.begin();i!=p->second.end();i++ ) // traverse all rating in particular year
+	{
+		sum+=*i;
+	}
+	cout<<"\n"<<"  average rating in "<<year<<" = "<<sum/particular_year_database[year].size();
+	
+
+	
+	// average review score in particular muvie 
+	string muvie_name;  
+	cout<<"\n"<<"enter muvie name : ";
+	cin>>muvie_name;
+	auto p1=particular_muvie_database.find(muvie_name);
+	int sum1=0;
+	
+	for(auto i=p1->second.begin();i!=p1->second.end();i++ )  // traverse all rating in particular muvie  
+	{
+		sum1+=*i;
+	}
+	cout<<"\n"<<"  average rating of "<<muvie_name<<" = "<<sum1/particular_muvie_database[muvie_name].size();
+	
+
+
+	
+	// top n movies by total review score by ‘critics’ in a particular genre.
+    string genre;  
+	cout<<"\n"<<"enter muvie category (genre) : ";
+	cin>>genre;
+	vector<pair<int,string>> total_rating_of_muvie; // to store all muvie with its total score  by critic in particular genre
+	
+	auto p2=particular_muvie_genre_database.find(genre);  // find particular genre in particular_muvie_genre_database 
+	for(auto i=p2->second.begin();i!=p2->second.end();i++ )  // traverse all muvie in particular genre  
+	{   
+	    int total_rating =0;
+		for(auto j=i->second.begin();j!=i->second.end();j++ )
+	     {
+	     	total_rating+=*j; // find all sum of score in particular muvie in this genre
+	     }
+		string muvie_name1=i->first;
+		total_rating_of_muvie.push_back({total_rating,muvie_name1});//store value in pair 
+	}
+    sort(total_rating_of_muvie.rbegin(), total_rating_of_muvie.rend()); // sort all muvie with its total score  by critic in particular genre
+    
+    cout<<"\n"<<" top n muvie in "<<genre<<" are :  "<<"\n\n";
+    for ( auto i=total_rating_of_muvie.begin();i!=total_rating_of_muvie.end();i++)
+    {
+        cout <<"\t"<<i->second << endl; // show top n muvie in selected genre
+    }
+    total_rating_of_muvie.clear();
+	
+	
+}
 
